@@ -50,7 +50,6 @@
 #include "phen_dnn.hpp"
 
 #include <sferes/run.hpp>
-#include <sferes/ctrl.hpp>
 #include <sferes/stc.hpp>
 #include <sferes/misc.hpp>
 
@@ -77,7 +76,6 @@
 
 using namespace sferes;
 using namespace sferes::gen::evo_float;
-using namespace sferes::ctrl;
 using namespace sferes::gen::dnn;
 using namespace fastsim;	
 using namespace nn;
