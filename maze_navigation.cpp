@@ -146,11 +146,11 @@ struct Params
 
 
 #ifdef MAZE2
-    SFERES_STRING(map_name, SFERES_ROOT "/exp/tutorial_ER/maze2.pbm");
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze2.pbm");
 #elif defined(MAZE3)
-    SFERES_STRING(map_name, SFERES_ROOT "/exp/tutorial_ER/maze3.pbm");
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze3.pbm");
 #else
-    SFERES_STRING(map_name, SFERES_ROOT "/exp/tutorial_ER/maze.pbm");
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze.pbm");
 #endif
   };
 

@@ -128,11 +128,11 @@ struct Params
     static const float nb_steps = 1000;
 
 #ifdef ENVOA1
-    SFERES_STRING(map_name, SFERES_ROOT "/exp/tutorial_ER/arena1.pbm");
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/arena1.pbm");
 #elif defined(ENVOA2)
-    SFERES_STRING(map_name, SFERES_ROOT "/exp/tutorial_ER/arena2.pbm");
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/arena2.pbm");
 #elif defined(ENVOA3)
-    SFERES_STRING(map_name, SFERES_ROOT "/exp/tutorial_ER/arena3.pbm");
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/arena3.pbm");
 #endif
   };
 
