@@ -1,6 +1,6 @@
 //| This file is a part of an experiment relying on the sferes2 framework.
 //| Copyright 2015, ISIR / Universite Pierre et Marie Curie (UPMC)
-//| Main contributor(s): 
+//| Main contributor(s):
 //|   * Stephane Doncieux, stephane.doncieux@isir.upmc.fr
 //|   * Jean-Baptiste Mouret, mouret@isir.upmc.fr (sferes framework)
 //|
@@ -12,7 +12,7 @@
 //| can use, modify and/ or redistribute the software under the terms
 //| of the CeCILL license as circulated by CEA, CNRS and INRIA at the
 //| following URL "http://www.cecill.info".
-//| 
+//|
 //| As a counterpart to the access to the source code and rights to
 //| copy, modify and redistribute granted by the license, users are
 //| provided only with a limited warranty and the software's author,
@@ -72,60 +72,60 @@
 using namespace sferes;
 using namespace sferes::gen::evo_float;
 using namespace sferes::gen::dnn;
-using namespace fastsim;	
+using namespace fastsim;
 using namespace nn;
 
 struct Params
 {
   struct dnn
   {
-    static const size_t nb_inputs       = 3; // laser 
-    static const size_t nb_outputs      = 2; // 2 motors: left and right wheel
-    static const size_t min_nb_neurons  = 0;
-    static const size_t max_nb_neurons  = 30;
-    static const size_t min_nb_conns    = 8;
-    static const size_t max_nb_conns    = 250;
-				
-    static const int io_param_evolving = true;
-    static const float m_rate_add_conn	= 0.0f;
-    static const float m_rate_del_conn	= 0.0f;
-    static const float m_rate_change_conn = 0.05f;
-    static const float m_rate_add_neuron  = 0.0f;
-    static const float m_rate_del_neuron  = 0.0f;
+    static constexpr size_t nb_inputs       = 3; // laser
+    static constexpr size_t nb_outputs      = 2; // 2 motors: left and right wheel
+    static constexpr size_t min_nb_neurons  = 0;
+    static constexpr size_t max_nb_neurons  = 30;
+    static constexpr size_t min_nb_conns    = 8;
+    static constexpr size_t max_nb_conns    = 250;
 
-    static const init_t init = ff;
+    static constexpr int io_param_evolving = true;
+    static constexpr float m_rate_add_conn	= 0.0f;
+    static constexpr float m_rate_del_conn	= 0.0f;
+    static constexpr float m_rate_change_conn = 0.05f;
+    static constexpr float m_rate_add_neuron  = 0.0f;
+    static constexpr float m_rate_del_neuron  = 0.0f;
+
+    static constexpr init_t init = ff;
   };
 
   struct evo_float
   {
-    static const mutation_t mutation_type = polynomial;
-    //static const cross_over_t cross_over_type = sbx;
-    static const cross_over_t cross_over_type = no_cross_over;
-    static const float cross_rate = 0.0f;    
-    static const float mutation_rate = 0.1f;
-    static const float eta_m = 15.0f;
-    static const float eta_c = 10.0f;
+    static constexpr mutation_t mutation_type = polynomial;
+    //static constexpr cross_over_t cross_over_type = sbx;
+    static constexpr cross_over_t cross_over_type = no_cross_over;
+    static constexpr float cross_rate = 0.0f;
+    static constexpr float mutation_rate = 0.1f;
+    static constexpr float eta_m = 15.0f;
+    static constexpr float eta_c = 10.0f;
   };
 
   struct pop
   {
-    static const unsigned size = 100;
-    static const unsigned nb_gen = 1001; 
-    static const int dump_period = 50;
-    static const int initial_aleat = 1;		
+    static constexpr unsigned size = 100;
+    static constexpr unsigned nb_gen = 1001;
+    static constexpr int dump_period = 50;
+    static constexpr int initial_aleat = 1;
   };
 
   struct parameters
   {
-    static const float min = -5.0f;
-    static const float max = 5.0f;
+    static constexpr float min = -5.0f;
+    static constexpr float max = 5.0f;
   };
 
   struct simu
-  { 
-    static const int laser_range     = 100.0f;
+  {
+    static constexpr int laser_range     = 100.0f;
     //Evalutations
-    static const float nb_steps = 1000;
+    static constexpr float nb_steps = 1000;
 
 #ifdef ENVOA1
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/arena1.pbm");
@@ -133,6 +133,8 @@ struct Params
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/arena2.pbm");
 #elif defined(ENVOA3)
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/arena3.pbm");
+#else
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/arena1.pbm");
 #endif
   };
 
@@ -153,13 +155,13 @@ namespace sferes
     //
     // This is the main function to evaluate the individual
     // It runs fastsim (simu_t simu)
-    // 
+    //
     // **********************************
     template<typename Indiv>
-      void eval(Indiv& ind) 
+      void eval(Indiv& ind)
     {
       ind.nn().simplify();
-      
+
       nb_coll=0;
       speed=0;
       lin_speed=0;
@@ -173,19 +175,19 @@ namespace sferes
       assert(simu.map()!=NULL);
 
       // init
-      
+
       init_simu(simu);
       ind.nn().init();
 
       time=0;
 
-      // *** Main Loop *** 
+      // *** Main Loop ***
       for (size_t i = 0; i < Params::simu::nb_steps && !stop_eval;)
-	{	    
+	{
 
 	  // Number of steps the robot is evaluated
 	  time++;
-	  
+
 	  // Update robot info & caracs
 	  simu.refresh();
 #ifdef VISU
@@ -210,19 +212,19 @@ namespace sferes
 
 	  // Get inputs
 	  get_inputs(simu);
-	  
+
 	  // Step  neural network -- outf is the output vector.
 	  step_check(ind.nn());
-	  
-	  // move the robot and check for collision and if is still 
+
+	  // move the robot and check for collision and if is still
 	  move_check(simu);
- 
+
       // loop forever if we are in the visualization mode
       if (this->mode() != fit::mode::view)
         i++;
 
 
-	} 
+	}
 
 
 #if defined(FIT1)
@@ -250,20 +252,20 @@ namespace sferes
 
     } // *** end of eval ***
 
-    
+
     template<typename Simu>
       void init_simu(Simu& simu)
     {
 
 
       this->_objs.resize(1);
-     	
+
       //Visualisation mode
 #ifdef VISU
-	  simu.init_view(true);      
-#elif !defined(NO_VISU)			
+	  simu.init_view(true);
+#elif !defined(NO_VISU)
 	if(this->mode() == fit::mode::view)
-	  simu.init_view(true);      
+	  simu.init_view(true);
 #endif
 
       simu.init();
@@ -276,25 +278,25 @@ namespace sferes
       simu.robot().add_laser(Laser(-M_PI / 4.0, 8.f*simu.robot().get_radius()*2.f));
       //middle
       simu.robot().add_laser(Laser(0.0f, 8.f*simu.robot().get_radius()*2.f));
-	
+
       old_pos=simu.robot().get_pos();
       inputs.resize(Params::dnn::nb_inputs);
-      
+
       simu.robot().set_pos(Posture(simu.map()->get_real_w()/4.0,simu.map()->get_real_w()/4.0, M_PI/4.0));
       simu.robot().move(0,0,simu.map());
- 
+
     }
-		 
+
 
 
 
     // *** Get sensors inputs
     template<typename Simu>
-      void get_inputs(Simu &simu) 
+      void get_inputs(Simu &simu)
     {
       // Update of the sensors
       size_t nb_lasers = simu.robot().get_lasers().size();
-	  
+
       // *** set inputs ***
 
       // inputs from sensors
@@ -303,26 +305,26 @@ namespace sferes
 	  float d = simu.robot().get_lasers()[j].get_dist();
 	  float range = simu.robot().get_lasers()[j].get_range();
 	  inputs[j] = (d == -1 ? 0 : 1 - d / range);
-	} 
+	}
 
-	
+
 
     }
 
     // *** Step Neural Network and various checks
     template<typename NN>
-      void step_check(NN &nn) 
+      void step_check(NN &nn)
     {
       nn.step(inputs);
       outf.resize(nn.get_outf().size());
       assert(nn.get_outf().size() == 2);
-      
+
       for(size_t j = 0; j < nn.get_outf().size(); j++)
 	if(std::isnan(nn.get_outf()[j]))
 	  outf[j] = 0.0;
 	else
 	  outf[j]=4*(2*nn.get_outf()[j]-1); // to put nn values in the interval [-4;4] instead of [0;1]
-      
+
       //std::cout<<"Outf: "<<nn.get_outf()[0]<<" "<<nn.get_outf()[1]<<std::endl;
 
     }
@@ -330,11 +332,11 @@ namespace sferes
 
     // *** Move and check if robot is colliding, or still
     template<typename Simu>
-      void move_check(Simu &simu) 
+      void move_check(Simu &simu)
     {
       // *** move robot ***
       simu.move_robot(outf[0], outf[1]);
-	
+
       float s=(outf[0]+outf[1])/8.0; // in [-1;1]
       float ds=fabs(outf[0]-outf[1])/8.0; // in [0;1]
       speed+=s;
@@ -374,14 +376,14 @@ namespace sferes
 
 
   };
-	
+
 }
 
 // ****************** Main *************************
 int main(int argc, char **argv)
 {
   srand(time(0));
-  
+
   typedef FitObstacle<Params> fit_t;
 
   typedef phen::Parameters<gen::EvoFloat<1, Params>, fit::FitDummy<>, Params> weight_t;
@@ -389,7 +391,7 @@ int main(int argc, char **argv)
 
   typedef PfWSum<weight_t> pf_t;
   typedef phen::Parameters<gen::EvoFloat<4, Params>, fit::FitDummy<>, Params> node_label_t;
-  typedef AfSigmoidBias<bias_t> af_t; 
+  typedef AfSigmoidBias<bias_t> af_t;
   typedef Neuron<pf_t, af_t >  neuron_t;
   typedef Connection <weight_t> connection_t;
   typedef sferes::gen::Dnn< neuron_t, connection_t, Params> gen_t;
@@ -397,14 +399,14 @@ int main(int argc, char **argv)
 
 
   typedef eval::Parallel<Params> eval_t;
-  // STATS 
+  // STATS
   typedef boost::fusion::vector<sferes::stat::ParetoFront<phen_t, Params> >  stat_t;
-  
+
   //MODIFIER
   typedef boost::fusion::vector<modif::Dummy<Params> > modifier_t;
 
-  typedef ea::Nsga2<phen_t, eval_t, stat_t, modifier_t, Params> ea_t; 
-  
+  typedef ea::Nsga2<phen_t, eval_t, stat_t, modifier_t, Params> ea_t;
+
   ea_t ea;
   res_dir=ea.res_dir();
   run_ea(argc, argv, ea);

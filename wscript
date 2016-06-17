@@ -1,15 +1,15 @@
 #! /usr/bin/env python
 
 import sferes
-
+from waflib.Configure import conf
 
 def build(bld):
 
 
     sferes.create_variants(bld,
 		source='obstacle_avoidance.cpp',
-                uselib_local = 'sferes2 fastsim',
-                uselib = 'EIGEN3 SDL BOOST_GRAPH BOOST_THREAD TBB',
+                use = 'sferes2 fastsim',
+                uselib = 'EIGEN SDL BOOST BOOST_GRAPH BOOST_THREAD TBB',
                 target = 'obstacle_avoidance',
                 cxxflags = bld.get_env()['CXXFLAGS'] + ['-Wno-unknown-pragmas'],
                 json = 'obstacle_avoidance.json',
@@ -32,8 +32,8 @@ def build(bld):
 
     sferes.create_variants(bld,
 		source='maze_navigation.cpp',
-                uselib_local = 'sferes2 fastsim',
-                uselib = 'EIGEN3 SDL BOOST_GRAPH BOOST_THREAD TBB',
+                use = 'sferes2 fastsim',
+                uselib = 'EIGEN SDL BOOST BOOST_GRAPH BOOST_THREAD TBB',
                 target = 'maze_navigation',
                 cxxflags = bld.get_env()['CXXFLAGS'] + ['-Wno-unknown-pragmas'],
                 json = 'maze_navigation.json',
@@ -57,4 +57,3 @@ def build(bld):
                             'NOVELTY MAZE2',
                             'NOVELTY MAZE3'
                     ])
-
