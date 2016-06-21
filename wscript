@@ -20,7 +20,7 @@ def build(bld):
                                  'FIT1 ENVOA2 SAVEBMP',
                                 # 'FIT1 ENVOA2 VISU',
                                  'FIT1 ENVOA3',
-                                 'FIT1 ENVOA3 VISU',
+                                 'FIT3 ENVOA3 VISU SAVETRAJ',
                                 #'FIT1 ENVOA3 VERBOSE',
                                 # 'FIT2 ENVOA1',
                                 # 'FIT2 ENVOA2',
@@ -54,6 +54,8 @@ def build(bld):
                             'DIVERSITY MAZE2',
                             'DIVERSITY MAZE3',
                             'NOVELTY',
+                            'NOVELTY SAVETRAJ',
+                            'NOVELTY MAZE4 SAVETRAJ',
                             'NOVELTY MAZE2',
                             'NOVELTY MAZE3'
                     ])

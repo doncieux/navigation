@@ -73,12 +73,15 @@
 #include "modifier_novelty.hpp"
 #endif
 
-
 using namespace sferes;
 using namespace sferes::gen::evo_float;
 using namespace sferes::gen::dnn;
 using namespace fastsim;
 using namespace nn;
+
+#ifdef SAVETRAJ
+#include "stat_traj.hpp"
+#endif
 
 struct Params
 {
@@ -149,6 +152,8 @@ struct Params
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze2.pbm");
 #elif defined(MAZE3)
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze3.pbm");
+#elif defined(MAZE4)
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze4.pbm");
 #else
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze.pbm");
 #endif
@@ -169,12 +174,14 @@ struct Params
   {
     static constexpr unsigned int k = 15; //nb neighbors
     static constexpr unsigned int max_archive_size = 50000; //Max archive size
+
+    static constexpr unsigned int nb_pos = 1; //nb of pos in the behavior descriptor (1=final position only, this is the descriptor used by Lehman and Stanley in their paper on Novelty search)
+
   };
 #endif
 
 };
 
-std::string res_dir="not_initialized";
 
 namespace sferes
 {
@@ -204,6 +211,7 @@ namespace sferes
 	std::cout<<"Eval ..."<<std::endl;
 #endif
 
+
       typedef simu::Fastsim<Params> simu_t;
       simu_t simu;
       assert(simu.map()!=NULL);
@@ -213,12 +221,19 @@ namespace sferes
       init_simu(simu);
       ind.nn().init();
 
+#ifdef SAVETRAJ
+      std::ostringstream straj;
+      straj<<"# map size "<<simu.map()->get_real_w()<<" "<<simu.map()->get_real_h()<<std::endl;
+      straj<<"# "<<Params::simu::map_name()<<std::endl;
+#endif
+
+
       time=0;
 
       int success=0;
-
+      size_t i;
       // *** Main Loop ***
-      for (size_t i = 0; i < Params::simu::nb_steps && !stop_eval;)
+      for (i = 0; i < Params::simu::nb_steps && !stop_eval;)
 	{
 
 	  // Number of steps the robot is evaluated
@@ -237,7 +252,7 @@ namespace sferes
 #ifdef SAVEBMP
         // WARNING: use with caution as it will generate many BMP...
         std::ostringstream os;
-        os<<res_dir<<"/img_"<<std::setfill('0')<<std::setw(6)<<time<<".bmp";
+        os<<"img_"<<std::setfill('0')<<std::setw(6)<<time<<".bmp";
         std::cout<<"Saving image: "<<os.str()<<std::endl;
         if (simu.display().save_BMP(os.str().c_str())!=0) {
           std::cerr<<"ERROR, can't save file: "<<os.str()<<std::endl;
@@ -255,16 +270,24 @@ namespace sferes
 	  // move the robot and check for collision and if is still
 	  move_check(simu);
 
+#ifdef SAVETRAJ
+    straj<<simu.robot().get_pos().get_x()<<" "<<simu.robot().get_pos().get_y()<<" "<<simu.robot().get_pos().theta()<<std::endl;
+#endif
+
       if ((simu.robot().get_pos().get_x()>simu.map()->get_real_w()*Params::fitness::min_x)
           &&(simu.robot().get_pos().get_x()<simu.map()->get_real_w()*Params::fitness::max_x)
           &&(simu.robot().get_pos().get_y()>simu.map()->get_real_h()*Params::fitness::min_y)
           &&(simu.robot().get_pos().get_y()<simu.map()->get_real_h()*Params::fitness::max_y)) {
-        std::cout<<"The robot has found the goal;"<<std::endl;
+        //std::cout<<"The robot has found the goal;"<<std::endl;
         success=1;
         if (this->mode() != fit::mode::view)
           stop_eval=1;
       }
 
+#ifdef NOVELTY
+      if ((i>0)&&(i%(int)(Params::simu::nb_steps/Params::novelty::nb_pos)==0))
+        pos_bd.push_back(simu.robot().get_pos());
+#endif
 
       // loop forever if we are in the visualization mode
       if (this->mode() != fit::mode::view)
@@ -273,6 +296,10 @@ namespace sferes
 
       }
 
+#ifdef NOVELTY
+      for (unsigned int j=pos_bd.size();j<Params::novelty::nb_pos;j++)
+        pos_bd.push_back(simu.robot().get_pos());
+#endif
 
       end_pos=simu.robot().get_pos();
 
@@ -280,6 +307,11 @@ namespace sferes
 		   simu.map()->get_real_h()*(Params::fitness::min_y+Params::fitness::max_y)/2.0,
 		   0);
       // Compute the fitness value
+#if defined(DIVERSITY) || defined(NOVELTY)
+      this->_objs.resize(2);
+#endif
+
+
 #if defined(FITDIST)
       this->_objs[0] = -end_pos.dist_to(goal);
       this->_value = this->_objs[0] ;
@@ -288,11 +320,8 @@ namespace sferes
       this->_value = success;
 #endif
 
-      std::cout<<"End_pos | "<<end_pos.get_x()<<" "<<end_pos.get_y()<<" | "<<end_pos.get_x()/simu.map()->get_real_w()<<" "<<end_pos.get_y()/simu.map()->get_real_h()<<std::endl;
+      //std::cout<<"End_pos | "<<end_pos.get_x()<<" "<<end_pos.get_y()<<" | "<<end_pos.get_x()/simu.map()->get_real_w()<<" "<<end_pos.get_y()/simu.map()->get_real_h()<<std::endl;
 
-#if defined(DIVERSITY) || defined(NOVELTY)
-      this->_objs.resize(2);
-#endif
 
 #ifdef VERBOSE
       static int nbeval=0;
@@ -300,6 +329,9 @@ namespace sferes
       nbeval++;
 #endif
 
+#ifdef SAVETRAJ
+  traj=straj.str();
+#endif
 
 
     } // *** end of eval ***
@@ -418,14 +450,21 @@ namespace sferes
     float speed, lin_speed;
     unsigned int stand_still;
     fastsim::Posture old_pos,end_pos;
+#ifdef NOVELTY
+    std::vector<fastsim::Posture> pos_bd; // behavior descriptor based on the position
+#endif
+
     bool stop_eval;                                  // Stops the evaluation
     std::vector<float> outf, inputs;
 
-
+#ifdef SAVETRAJ
+  std::string traj;
+#endif
 
   };
 
 }
+
 
 // ****************** Main *************************
 int main(int argc, char **argv)
@@ -448,7 +487,12 @@ int main(int argc, char **argv)
 
   typedef eval::Parallel<Params> eval_t;
   // STATS
-  typedef boost::fusion::vector<sferes::stat::ParetoFront<phen_t, Params> >  stat_t;
+  typedef boost::fusion::vector<
+  sferes::stat::ParetoFront<phen_t, Params>
+#ifdef SAVETRAJ
+  ,sferes::stat::Traj<phen_t, Params>
+#endif
+   >  stat_t;
 
   //MODIFIER
 #ifdef DIVERSITY
@@ -462,7 +506,6 @@ int main(int argc, char **argv)
   typedef ea::Nsga2<phen_t, eval_t, stat_t, modifier_t, Params> ea_t;
 
   ea_t ea;
-  res_dir=ea.res_dir();
   run_ea(argc, argv, ea);
 
   return 0;

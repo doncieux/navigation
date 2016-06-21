@@ -68,6 +68,9 @@
 
 #include <modules/fastsim/simu_fastsim.hpp>
 
+#ifdef SAVETRAJ
+#include "stat_traj.hpp"
+#endif
 
 using namespace sferes;
 using namespace sferes::gen::evo_float;
@@ -179,6 +182,11 @@ namespace sferes
       init_simu(simu);
       ind.nn().init();
 
+#ifdef SAVETRAJ
+      std::ostringstream straj;
+      straj<<"# map size "<<simu.map()->get_real_w()<<" "<<simu.map()->get_real_h()<<std::endl;
+      straj<<"# "<<Params::simu::map_name()<<std::endl;
+#endif
       time=0;
 
       // *** Main Loop ***
@@ -219,6 +227,10 @@ namespace sferes
 	  // move the robot and check for collision and if is still
 	  move_check(simu);
 
+#ifdef SAVETRAJ
+    straj<<simu.robot().get_pos().get_x()<<" "<<simu.robot().get_pos().get_y()<<" "<<simu.robot().get_pos().theta()<<std::endl;
+#endif
+
       // loop forever if we are in the visualization mode
       if (this->mode() != fit::mode::view)
         i++;
@@ -248,6 +260,9 @@ namespace sferes
       nbeval++;
 #endif
 
+#ifdef SAVETRAJ
+  traj=straj.str();
+#endif
 
 
     } // *** end of eval ***
@@ -374,6 +389,9 @@ namespace sferes
     std::vector<float> outf, inputs;
 
 
+#ifdef SAVETRAJ
+    std::string traj;
+#endif
 
   };
 
@@ -400,7 +418,12 @@ int main(int argc, char **argv)
 
   typedef eval::Parallel<Params> eval_t;
   // STATS
-  typedef boost::fusion::vector<sferes::stat::ParetoFront<phen_t, Params> >  stat_t;
+  typedef boost::fusion::vector<
+    sferes::stat::ParetoFront<phen_t, Params>
+#ifdef SAVETRAJ
+   ,sferes::stat::Traj<phen_t, Params>
+#endif
+    >  stat_t;
 
   //MODIFIER
   typedef boost::fusion::vector<modif::Dummy<Params> > modifier_t;
