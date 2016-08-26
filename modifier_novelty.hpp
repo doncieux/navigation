@@ -86,10 +86,10 @@ namespace sferes
 		  if(j<_pop.size()) {
             hd=0;
             for (unsigned int k=0;k<_pop[i]->fit().pos_bd.size();k++) {
-              delta=_pop[i]->fit().pos_bd[k].get_x()-_pop[i]->fit().pos_bd[k].get_x();
+              delta=_pop[i]->fit().pos_bd[k].get_x()-_pop[j]->fit().pos_bd[k].get_x();
               delta*=delta;
               hd+=delta;
-              delta=_pop[i]->fit().pos_bd[k].get_y()-_pop[i]->fit().pos_bd[k].get_y();
+              delta=_pop[i]->fit().pos_bd[k].get_y()-_pop[j]->fit().pos_bd[k].get_y();
               delta*=delta;
               hd+=delta;
             }
