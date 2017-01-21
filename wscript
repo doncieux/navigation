@@ -12,7 +12,6 @@ def build(bld):
                 uselib = 'EIGEN SDL BOOST BOOST_GRAPH BOOST_THREAD TBB',
                 target = 'obstacle_avoidance',
                 cxxflags = bld.get_env()['CXXFLAGS'] + ['-Wno-unknown-pragmas'],
-                json = 'obstacle_avoidance.json',
                 variants = [
                                  'FIT1 ENVOA1',
                                 # 'FIT1 ENVOA1 VISU',
@@ -36,7 +35,6 @@ def build(bld):
                 uselib = 'EIGEN SDL BOOST BOOST_GRAPH BOOST_THREAD TBB',
                 target = 'maze_navigation',
                 cxxflags = bld.get_env()['CXXFLAGS'] + ['-Wno-unknown-pragmas'],
-                json = 'maze_navigation.json',
                 variants = [
                             'STD LONG BIGSIZE',
                             'DIVERSITY LONG BIGSIZE',
