@@ -12,6 +12,21 @@ These experiments have illustrated tutorials given by Stephane Doncieux on selec
 Usage & installation
 --------------------
 
+### Docker
+A Docker image in which all the dependencies have been installed together with sferes the navigation experiment and the required module can be found here: https://hub.docker.com/r/doncieux/navigation/
+To use it, you need to install docker (https://www.docker.com/) and to do the following:
+   docker pull doncieux/navigation 
+To run the docker image:
+   docker run -it doncieux/navigation
+
+The navigation executables are in /git/sferes2/build/exp/navigation
+
+You can launch them or make your own modifications and test their result.
+
+WARNING: the modifications you make in the container will be lost when you quit the image. If you want to keep it, you need to create data volumes or mount a host directory. See https://docs.docker.com/engine/tutorials/dockervolumes/ for more details.
+
+
+
 ### Dependencies:
 sferes2 core (https://github.com/sferes2/sferes2)
 sferes2 modules:
