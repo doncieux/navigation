@@ -130,6 +130,8 @@ struct Params
     //Evalutations
     static constexpr float nb_steps = 1000;
 
+    static constexpr float dt =0.01;
+
 #ifdef ENVOA1
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/arena1.pbm");
 #elif defined(ENVOA2)

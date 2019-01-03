@@ -123,7 +123,7 @@ namespace sferes
 	      for(size_t j=0; j<Params::novelty::k; ++j)
             d+=v_dist[j].dist;
 	      d /= (float)Params::novelty::k;
-	      int obj_num = 1;
+	      int obj_num = 0;
 	      assert(obj_num<_pop[i]->fit().objs().size());
 	      _pop[i]->fit().set_obj(obj_num, d);
 	    }
@@ -145,7 +145,7 @@ namespace sferes
                         novelty::_parallel_behavior_nov<typename Ea::phen_t, archive_t, Params>(ea.pop(),_archive));
         //std::cout<<"paralleldone"<<std::endl;
         //Update archive
-        int obj_num = 1;
+        int obj_num = 0;
         int bestindiv = -1;
         float max_sparse = -1.0;
 

@@ -71,7 +71,10 @@
 
 #ifdef NOVELTY
 #include "modifier_novelty.hpp"
+#include "stat_bd.hpp"
 #endif
+
+#include "stat_success.hpp"
 
 using namespace sferes;
 using namespace sferes::gen::evo_float;
@@ -121,13 +124,23 @@ struct Params
     static constexpr unsigned size = 200;
 #elif defined (VBIGSIZE)
     static constexpr unsigned size = 400;
+#elif defined (VVBIGSIZE)
+    static constexpr unsigned size = 10000;
 #else
     static constexpr unsigned size = 100;
 #endif
 #ifdef LONG
     static constexpr unsigned nb_gen = 4001;
 #elif defined (VLONG)
-    static constexpr unsigned nb_gen = 8001;
+    static constexpr unsigned nb_gen = 10001;
+#elif defined (VLONG2)
+    static constexpr unsigned nb_gen = 20001;
+#elif defined (VVLONG)
+    static constexpr unsigned nb_gen = 100001;
+#elif defined (G100)
+    static constexpr unsigned nb_gen = 101;
+#elif defined (GONE)
+    static constexpr unsigned nb_gen = 1;
 #else
     static constexpr unsigned nb_gen = 1001;
 #endif
@@ -147,6 +160,8 @@ struct Params
     //Evalutations
     static constexpr float nb_steps = 2000;
 
+    static constexpr float dt =0.01;
+
 
 #ifdef MAZE2
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze2.pbm");
@@ -154,6 +169,10 @@ struct Params
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze3.pbm");
 #elif defined(MAZE4)
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze4.pbm");
+#elif defined(ARENA1)
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/arena1.pbm");
+#elif defined(MAZEHARD)
+    SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze_hard.pbm");
 #else
     SFERES_STRING(map_name, SFERES_ROOT "/exp/navigation/maze.pbm");
 #endif
@@ -161,12 +180,119 @@ struct Params
 
   struct fitness
   {
-    // Expressed in percentage of map size
-    static constexpr float min_x=0.85;
-    static constexpr float max_x=0.95;
-    static constexpr float min_y=0.85;
-    static constexpr float max_y=0.95;
+#ifdef MAZEHARD
 
+#ifdef GOALAREA1
+    // for a theoretical p1 = 10e-4
+    // Expressed in percentage of map size
+    static constexpr float min_x1=0.1;
+    static constexpr float max_x1=0.11;
+    static constexpr float min_y1=0.1;
+    static constexpr float max_y1=0.11;
+
+    static constexpr float min_x2=0.1;
+    static constexpr float max_x2=0.11;
+    static constexpr float min_y2=0.30;
+    static constexpr float max_y2=0.31;
+
+    static constexpr float min_x3=0.1;
+    static constexpr float max_x3=0.11;
+    static constexpr float min_y3=0.75;
+    static constexpr float max_y3=0.76;
+#elif defined(GOALAREA2)
+    // for a theoretical p1 = 10e-6
+    // Expressed in percentage of map size
+    static constexpr float min_x1=0.1;
+    static constexpr float max_x1=0.101;
+    static constexpr float min_y1=0.1;
+    static constexpr float max_y1=0.101;
+
+    static constexpr float min_x2=0.1;
+    static constexpr float max_x2=0.101;
+    static constexpr float min_y2=0.30;
+    static constexpr float max_y2=0.301;
+
+    static constexpr float min_x3=0.1;
+    static constexpr float max_x3=0.011;
+    static constexpr float min_y3=0.75;
+    static constexpr float max_y3=0.751;
+#else
+    // for a theoretical p1 = 10e-2
+    // Expressed in percentage of map size
+    static constexpr float min_x1=0.1;
+    static constexpr float max_x1=0.2;
+    static constexpr float min_y1=0.1;
+    static constexpr float max_y1=0.2;
+    
+    static constexpr float min_x2=0.1;
+    static constexpr float max_x2=0.2;
+    static constexpr float min_y2=0.30;
+    static constexpr float max_y2=0.40;
+
+    static constexpr float min_x3=0.1;
+    static constexpr float max_x3=0.2;
+    static constexpr float min_y3=0.75;
+    static constexpr float max_y3=0.85;
+
+#endif
+    
+#else
+
+#ifdef GOALAREA1
+    // for a theoretical p1 = 10e-4
+    // Expressed in percentage of map size
+    static constexpr float min_x1=0.9;
+    static constexpr float max_x1=0.91;
+    static constexpr float min_y1=0.9;
+    static constexpr float max_y1=0.91;
+
+    static constexpr float min_x2=0.9;
+    static constexpr float max_x2=0.91;
+    static constexpr float min_y2=0.1;
+    static constexpr float max_y2=0.11;
+
+    static constexpr float min_x3=0.1;
+    static constexpr float max_x3=0.11;
+    static constexpr float min_y3=0.1;
+    static constexpr float max_y3=0.11;
+#elif defined(GOALAREA2)
+    // for a theoretical p1 = 10e-6
+    // Expressed in percentage of map size
+    static constexpr float min_x1=0.9;
+    static constexpr float max_x1=0.901;
+    static constexpr float min_y1=0.9;
+    static constexpr float max_y1=0.901;
+
+    static constexpr float min_x2=0.9;
+    static constexpr float max_x2=0.901;
+    static constexpr float min_y2=0.1;
+    static constexpr float max_y2=0.101;
+
+    static constexpr float min_x3=0.1;
+    static constexpr float max_x3=0.101;
+    static constexpr float min_y3=0.1;
+    static constexpr float max_y3=0.101;
+#else
+    // for a theoretical p1 = 10e-2
+    // Expressed in percentage of map size
+    static constexpr float min_x1=0.85;
+    static constexpr float max_x1=0.95;
+    static constexpr float min_y1=0.85;
+    static constexpr float max_y1=0.95;
+
+    static constexpr float min_x2=0.85;
+    static constexpr float max_x2=0.95;
+    static constexpr float min_y2=0.15;
+    static constexpr float max_y2=0.25;
+
+    static constexpr float min_x3=0.15;
+    static constexpr float max_x3=0.25;
+    static constexpr float min_y3=0.15;
+    static constexpr float max_y3=0.25;
+#endif
+
+#endif
+    
   };
 
 #ifdef NOVELTY
@@ -183,6 +309,10 @@ struct Params
 };
 
 
+int success1_so_far=0;
+int success2_so_far=0;
+int success3_so_far=0;
+
 namespace sferes
 {
 
@@ -190,7 +320,7 @@ namespace sferes
   SFERES_FITNESS(FitMazeNavigation, sferes::fit::Fitness)
   {
   public:
-    FitMazeNavigation():nb_coll(0), time(0), speed(0), lin_speed(0), stop_eval(false) { }
+    FitMazeNavigation():nb_coll(0), time(0), speed(0), lin_speed(0), success1(0), success3(0),stop_eval(false) { }
 
     // *************** _eval ************
     //
@@ -230,110 +360,136 @@ namespace sferes
 
       time=0;
 
-      int success=0;
+      success1=0;
+      success2=0;
+      success3=0;
       size_t i;
       // *** Main Loop ***
       for (i = 0; i < Params::simu::nb_steps && !stop_eval;)
 	{
-
+	  
 	  // Number of steps the robot is evaluated
 	  time++;
-
+	  
 	  // Update robot info & caracs
 	  simu.refresh();
 #ifdef VISU
-      if (1) {
+	  if (1) {
 #elif defined(NO_VISU)
-      if (0) {
+	  if (0) {
 #else
-      if (this->mode() == fit::mode::view) {
+	  if (this->mode() == fit::mode::view) {
 #endif
 	    simu.refresh_view();
 #ifdef SAVEBMP
-        // WARNING: use with caution as it will generate many BMP...
-        std::ostringstream os;
-        os<<"img_"<<std::setfill('0')<<std::setw(6)<<time<<".bmp";
-        std::cout<<"Saving image: "<<os.str()<<std::endl;
-        if (simu.display().save_BMP(os.str().c_str())!=0) {
-          std::cerr<<"ERROR, can't save file: "<<os.str()<<std::endl;
-        }
-
+	    // WARNING: use with caution as it will generate many BMP...
+	    std::ostringstream os;
+	    os<<"img_"<<std::setfill('0')<<std::setw(6)<<time<<".bmp";
+	    std::cout<<"Saving image: "<<os.str()<<std::endl;
+	    if (simu.display().save_BMP(os.str().c_str())!=0) {
+	      std::cerr<<"ERROR, can't save file: "<<os.str()<<std::endl;
+	    }
+	    
 #endif
-      }
-
+	  }
+	  
 	  // Get inputs
 	  get_inputs(simu);
-
+	  
 	  // Step  neural network -- outf is the output vector.
 	  step_check(ind.nn());
-
+	  
 	  // move the robot and check for collision and if is still
 	  move_check(simu);
-
+	  
 #ifdef SAVETRAJ
-    straj<<simu.robot().get_pos().get_x()<<" "<<simu.robot().get_pos().get_y()<<" "<<simu.robot().get_pos().theta()<<std::endl;
+	  straj<<simu.robot().get_pos().get_x()<<" "<<simu.robot().get_pos().get_y()<<" "<<simu.robot().get_pos().theta()<<std::endl;
 #endif
-
-      if ((simu.robot().get_pos().get_x()>simu.map()->get_real_w()*Params::fitness::min_x)
-          &&(simu.robot().get_pos().get_x()<simu.map()->get_real_w()*Params::fitness::max_x)
-          &&(simu.robot().get_pos().get_y()>simu.map()->get_real_h()*Params::fitness::min_y)
-          &&(simu.robot().get_pos().get_y()<simu.map()->get_real_h()*Params::fitness::max_y)) {
-        //std::cout<<"The robot has found the goal;"<<std::endl;
-        success=1;
-        if (this->mode() != fit::mode::view)
-          stop_eval=1;
-      }
-
+	  
+	  
 #ifdef NOVELTY
-      if ((i>0)&&(i%(int)(Params::simu::nb_steps/Params::novelty::nb_pos)==0))
-        pos_bd.push_back(simu.robot().get_pos());
+	  if ((i>0)&&(i%(int)(Params::simu::nb_steps/Params::novelty::nb_pos)==0))
+	    pos_bd.push_back(simu.robot().get_pos());
 #endif
+	  
+	  // loop forever if we are in the visualization mode
+	  if (this->mode() != fit::mode::view)
+	    i++;
 
-      // loop forever if we are in the visualization mode
-      if (this->mode() != fit::mode::view)
-        i++;
-
-
-      }
-
+	  }
+	  
 #ifdef NOVELTY
-      for (unsigned int j=pos_bd.size();j<Params::novelty::nb_pos;j++)
-        pos_bd.push_back(simu.robot().get_pos());
+	  for (unsigned int j=pos_bd.size();j<Params::novelty::nb_pos;j++)
+	    pos_bd.push_back(simu.robot().get_pos());
 #endif
-
-      end_pos=simu.robot().get_pos();
-
-      Posture goal(simu.map()->get_real_w()*(Params::fitness::min_x+Params::fitness::max_x)/2.0,
-		   simu.map()->get_real_h()*(Params::fitness::min_y+Params::fitness::max_y)/2.0,
-		   0);
-      // Compute the fitness value
-#if defined(DIVERSITY) || defined(NOVELTY)
-      this->_objs.resize(2);
+	  
+	  end_pos=simu.robot().get_pos();
+	  
+	  // Compute the fitness value
+#if defined(DIVERSITY) //|| defined(NOVELTY)
+	  this->_objs.resize(2);
 #endif
-
-
+	  
+#ifndef NOEXIT
+	  if ((simu.robot().get_pos().get_x()>=simu.map()->get_real_w()*Params::fitness::min_x1)
+	      &&(simu.robot().get_pos().get_x()<=simu.map()->get_real_w()*Params::fitness::max_x1)
+	      &&(simu.robot().get_pos().get_y()>=simu.map()->get_real_h()*Params::fitness::min_y1)
+	      &&(simu.robot().get_pos().get_y()<=simu.map()->get_real_h()*Params::fitness::max_y1)) {
+	    //std::cout<<"The robot has found the goal:"<<simu.robot().get_pos().get_x()<<" "<<simu.robot().get_pos().get_y()<<std::endl;
+	    success1=1;
+	    success1_so_far+=1; // WARNING: not significant if individuals are reevaluated (which is the case for NSGA-2, for instance)
+	  }
+	  else {
+	    //std::cout<<"Goal not found"<<std::endl;
+	  }
+	  if ((simu.robot().get_pos().get_x()>=simu.map()->get_real_w()*Params::fitness::min_x2)
+	      &&(simu.robot().get_pos().get_x()<=simu.map()->get_real_w()*Params::fitness::max_x2)
+	      &&(simu.robot().get_pos().get_y()>=simu.map()->get_real_h()*Params::fitness::min_y2)
+	      &&(simu.robot().get_pos().get_y()<=simu.map()->get_real_h()*Params::fitness::max_y2)) {
+	    //std::cout<<"The robot has found the goal:"<<simu.robot().get_pos().get_x()<<" "<<simu.robot().get_pos().get_y()<<std::endl;
+	    success2=1;
+	    success2_so_far+=1; // WARNING: not significant if individuals are reevaluated (which is the case for NSGA-2, for instance)
+	  }
+	  else {
+	    //std::cout<<"Goal not found"<<std::endl;
+	  }
+	  if ((simu.robot().get_pos().get_x()>=simu.map()->get_real_w()*Params::fitness::min_x3)
+	      &&(simu.robot().get_pos().get_x()<=simu.map()->get_real_w()*Params::fitness::max_x3)
+	      &&(simu.robot().get_pos().get_y()>=simu.map()->get_real_h()*Params::fitness::min_y3)
+	      &&(simu.robot().get_pos().get_y()<=simu.map()->get_real_h()*Params::fitness::max_y3)) {
+	    //std::cout<<"The robot has found the goal:"<<simu.robot().get_pos().get_x()<<" "<<simu.robot().get_pos().get_y()<<std::endl;
+	    success3=1;
+	    success3_so_far+=1;  // WARNING: not significant if individuals are reevaluated (which is the case for NSGA-2, for instance)
+	  }
+	  else {
+	    //std::cout<<"Goal not found"<<std::endl;
+	  }
+#endif
+	  
+	  /*	  
 #if defined(FITDIST)
-      this->_objs[0] = -end_pos.dist_to(goal);
-      this->_value = this->_objs[0] ;
+	  this->_objs[0] = -end_pos.dist_to(goal);
+	  this->_value = this->_objs[0] ;
 #else
-      this->_objs[0] = success;
-      this->_value = success;
+	  this->_objs[0] = success;
+	  this->_value = success;
 #endif
-
-      //std::cout<<"End_pos | "<<end_pos.get_x()<<" "<<end_pos.get_y()<<" | "<<end_pos.get_x()/simu.map()->get_real_w()<<" "<<end_pos.get_y()/simu.map()->get_real_h()<<std::endl;
-
-
+	  */
+	  
+	  //std::cout<<"End_pos | "<<end_pos.get_x()<<" "<<end_pos.get_y()<<" | "<<end_pos.get_x()/simu.map()->get_real_w()<<" "<<end_pos.get_y()/simu.map()->get_real_h()<<std::endl;
+	  
+	  
 #ifdef VERBOSE
-      static int nbeval=0;
-      std::cout<<"fit="<<this->_objs[0]<<" nbeval="<<nbeval<<std::endl;
-      nbeval++;
+	  static int nbeval=0;
+	  std::cout<<"fit="<<this->_objs[0]<<" nbeval="<<nbeval<<std::endl;
+	  nbeval++;
 #endif
-
+	  
 #ifdef SAVETRAJ
-  traj=straj.str();
+	  traj=straj.str();
 #endif
-
-
+	  
+	  
     } // *** end of eval ***
 
 
@@ -366,7 +522,15 @@ namespace sferes
       old_pos=simu.robot().get_pos();
       inputs.resize(Params::dnn::nb_inputs);
 
+#ifdef TOWARDSCORNER
+      simu.robot().set_pos(Posture(simu.map()->get_real_w()*0.1,simu.map()->get_real_w()*0.1, -3.*M_PI/4.0));
+#elif TURNED
+      simu.robot().set_pos(Posture(simu.map()->get_real_w()*0.1,simu.map()->get_real_w()*0.1, -M_PI/4.0));
+#elif LOWERLEFT
+      simu.robot().set_pos(Posture(simu.map()->get_real_w()*0.1,simu.map()->get_real_w()*0.9, -M_PI/2.0));
+#else
       simu.robot().set_pos(Posture(simu.map()->get_real_w()*0.1,simu.map()->get_real_w()*0.1, M_PI/4.0));
+#endif
       simu.robot().move(0,0,simu.map());
 
     }
@@ -454,6 +618,10 @@ namespace sferes
     std::vector<fastsim::Posture> pos_bd; // behavior descriptor based on the position
 #endif
 
+    int success1, success2, success3;
+    int get_success1_so_far(void) {return success1_so_far;}
+    int get_success2_so_far(void) {return success2_so_far;}
+    int get_success3_so_far(void) {return success3_so_far;}
     bool stop_eval;                                  // Stops the evaluation
     std::vector<float> outf, inputs;
 
@@ -488,9 +656,11 @@ int main(int argc, char **argv)
   typedef eval::Parallel<Params> eval_t;
   // STATS
   typedef boost::fusion::vector<
-  sferes::stat::ParetoFront<phen_t, Params>
+    sferes::stat::ParetoFront<phen_t, Params>,
+    sferes::stat::BD<phen_t, Params>,
+    sferes::stat::Success<phen_t, Params>    
 #ifdef SAVETRAJ
-  ,sferes::stat::Traj<phen_t, Params>
+    ,sferes::stat::Traj<phen_t, Params>
 #endif
    >  stat_t;
 
