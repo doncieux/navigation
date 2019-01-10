@@ -301,8 +301,13 @@ struct Params
     static constexpr unsigned int k = 15; //nb neighbors
     static constexpr unsigned int max_archive_size = 50000; //Max archive size
 
+#ifdef NBPOS2
+    static constexpr unsigned int nb_pos = 2;
+#elif defined(NBPOS10)
+    static constexpr unsigned int nb_pos = 10;
+#else
     static constexpr unsigned int nb_pos = 1; //nb of pos in the behavior descriptor (1=final position only, this is the descriptor used by Lehman and Stanley in their paper on Novelty search)
-
+#endif
   };
 #endif
 
@@ -422,6 +427,7 @@ namespace sferes
 	  for (unsigned int j=pos_bd.size();j<Params::novelty::nb_pos;j++)
 	    pos_bd.push_back(simu.robot().get_pos());
 #endif
+
 	  
 	  end_pos=simu.robot().get_pos();
 	  
