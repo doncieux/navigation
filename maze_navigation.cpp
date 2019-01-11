@@ -137,6 +137,8 @@ struct Params
     static constexpr unsigned nb_gen = 20001;
 #elif defined (VVLONG)
     static constexpr unsigned nb_gen = 100001;
+#elif defined (VVLONG2)
+    static constexpr unsigned nb_gen = 200001;
 #elif defined (G100)
     static constexpr unsigned nb_gen = 101;
 #elif defined (GONE)
